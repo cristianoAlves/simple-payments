@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="alvcris" id="202506040000">
+        <createSequence
+          incrementBy="1"
+          maxValue="999999"
+          minValue="1"
+          sequenceName="account_holder_seq"
+          startValue="1"/>
+        <!-- Create sequence for ID generation -->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="account_holder_seq"/>
+            </not>
+        </preConditions>
+    </changeSet>
+
+    <changeSet author="alvcris" id="202506040001">
+        <addDefaultValue
+          columnName="id"
+          defaultValueComputed="nextval('account_holder_seq')"
+          tableName="SP_ACCOUNT_HOLDER"/>
+        <!-- Create SP_ACCOUNT_HOLDER table -->
+        <createTable tableName="SP_ACCOUNT_HOLDER">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="document" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="balance" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Add default value using the sequence (PostgreSQL specific) -->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="SP_ACCOUNT_HOLDER"/>
+            </not>
+        </preConditions>
+    </changeSet>
+
+    <!--    <changeSet id="202505231025" author="alvcris">-->
+    <!--        <preConditions onFail="MARK_RAN">-->
+    <!--            <sqlCheck expectedResult="0">-->
+    <!--                SELECT COUNT(*) FROM employee;-->
+    <!--            </sqlCheck>-->
+    <!--        </preConditions>-->
+
+    <!--        <insert tableName="employee">-->
+    <!--            <column name="name" value="Bilbo Baggins"/>-->
+    <!--            <column name="role" value="burglar"/>-->
+    <!--        </insert>-->
+
+    <!--        <insert tableName="employee">-->
+    <!--            <column name="name" value="Frodo Baggins"/>-->
+    <!--            <column name="role" value="thief"/>-->
+    <!--        </insert>-->
+    <!--    </changeSet>-->
+</databaseChangeLog>
