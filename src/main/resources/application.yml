@@ -1,0 +1,39 @@
+info:
+  app:
+    name: '@project.artifactId@'
+    description: '@project.description@'
+    version: '@project.version@'
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: :INFO
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/paymentsdb
+    username: postgres
+    password: mysecretpassword
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        order_updates: true
+        order_inserts: true
+        open-in-view: false
+        jdbc.time_zone: UTC
+        jdbc.batch_size: 30
+        globally_quoted_identifiers: true
+      org.hibernate.flushMode: COMMIT
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+      #ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
