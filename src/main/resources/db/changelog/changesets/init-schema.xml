@@ -6,6 +6,11 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <changeSet author="alvcris" id="202506040000">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="account_holder_seq"/>
+            </not>
+        </preConditions>
         <createSequence
           incrementBy="1"
           maxValue="999999"
@@ -13,18 +18,15 @@
           sequenceName="account_holder_seq"
           startValue="1"/>
         <!-- Create sequence for ID generation -->
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <sequenceExists sequenceName="account_holder_seq"/>
-            </not>
-        </preConditions>
     </changeSet>
 
     <changeSet author="alvcris" id="202506040001">
-        <addDefaultValue
-          columnName="id"
-          defaultValueComputed="nextval('account_holder_seq')"
-          tableName="SP_ACCOUNT_HOLDER"/>
+        <!-- Add default value using the sequence (PostgreSQL specific) -->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="SP_ACCOUNT_HOLDER"/>
+            </not>
+        </preConditions>
         <!-- Create SP_ACCOUNT_HOLDER table -->
         <createTable tableName="SP_ACCOUNT_HOLDER">
             <column name="id" type="BIGINT">
@@ -46,13 +48,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <!-- Add default value using the sequence (PostgreSQL specific) -->
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="SP_ACCOUNT_HOLDER"/>
-            </not>
-        </preConditions>
+        <addDefaultValue
+          columnName="id"
+          defaultValueComputed="nextval('account_holder_seq')"
+          tableName="SP_ACCOUNT_HOLDER"/>
     </changeSet>
 
     <!--    <changeSet id="202505231025" author="alvcris">-->
