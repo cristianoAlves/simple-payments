@@ -24,11 +24,11 @@
         <!-- Add default value using the sequence (PostgreSQL specific) -->
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="SP_ACCOUNT_HOLDER"/>
+                <tableExists tableName="sp_account_holder"/>
             </not>
         </preConditions>
-        <!-- Create SP_ACCOUNT_HOLDER table -->
-        <createTable tableName="SP_ACCOUNT_HOLDER">
+        <!-- Create sp_account_holder table -->
+        <createTable tableName="sp_account_holder">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
@@ -51,24 +51,48 @@
         <addDefaultValue
           columnName="id"
           defaultValueComputed="nextval('account_holder_seq')"
-          tableName="SP_ACCOUNT_HOLDER"/>
+          tableName="sp_account_holder"/>
     </changeSet>
 
-    <!--    <changeSet id="202505231025" author="alvcris">-->
-    <!--        <preConditions onFail="MARK_RAN">-->
-    <!--            <sqlCheck expectedResult="0">-->
-    <!--                SELECT COUNT(*) FROM employee;-->
-    <!--            </sqlCheck>-->
-    <!--        </preConditions>-->
+    <changeSet id="202506060000" author="alvcris">
+        <createSequence sequenceName="transaction_seq"
+          startValue="1"
+          incrementBy="1"/>
+    </changeSet>
 
-    <!--        <insert tableName="employee">-->
-    <!--            <column name="name" value="Bilbo Baggins"/>-->
-    <!--            <column name="role" value="burglar"/>-->
-    <!--        </insert>-->
+    <!-- Create sp_transaction table -->
+    <changeSet id="202506060001" author="alvcris">
+        <createTable tableName="sp_transaction">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="receiver_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
-    <!--        <insert tableName="employee">-->
-    <!--            <column name="name" value="Frodo Baggins"/>-->
-    <!--            <column name="role" value="thief"/>-->
-    <!--        </insert>-->
-    <!--    </changeSet>-->
+        <!-- Add foreign key constraints -->
+        <addForeignKeyConstraint
+          baseTableName="sp_transaction"
+          baseColumnNames="sender_id"
+          referencedTableName="sp_account_holder"
+          referencedColumnNames="id"
+          constraintName="fk_transaction_sender"/>
+
+        <addForeignKeyConstraint
+          baseTableName="sp_transaction"
+          baseColumnNames="receiver_id"
+          referencedTableName="sp_account_holder"
+          referencedColumnNames="id"
+          constraintName="fk_transaction_receiver"/>
+    </changeSet>
 </databaseChangeLog>

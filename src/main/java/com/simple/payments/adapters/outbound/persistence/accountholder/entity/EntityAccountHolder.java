@@ -20,7 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "SP_ACCOUNT_HOLDER")
+@Table(name = "sp_account_holder")
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 @NoArgsConstructor
 @Builder(toBuilder = true)

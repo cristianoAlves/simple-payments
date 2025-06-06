@@ -1,9 +1,10 @@
-package com.simple.payments.config;
+package com.simple.payments;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+//@ComponentScan(basePackages = "com.simple.payments")
 @SuppressWarnings("checkstyle:hideutilityclassconstructor")
 public class PaymentsApplication {
 

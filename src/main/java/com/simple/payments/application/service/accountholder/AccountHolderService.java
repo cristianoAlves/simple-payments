@@ -1,7 +1,7 @@
 package com.simple.payments.application.service.accountholder;
 
 import com.simple.payments.adapters.outbound.persistence.accountholder.entity.EntityAccountHolder;
-import com.simple.payments.adapters.outbound.persistence.transaction.mapper.AccountHolderMapper;
+import com.simple.payments.adapters.outbound.persistence.accountholder.mapper.AccountHolderMapper;
 import com.simple.payments.domain.accountholder.model.AccountHolder;
 import com.simple.payments.domain.accountholder.port.in.AccountHolderUseCase;
 import com.simple.payments.domain.accountholder.port.out.AccountHolderRepository;
@@ -21,7 +21,7 @@ public class AccountHolderService implements AccountHolderUseCase {
     @Override
     public void validateTransaction(final AccountHolder accountHolder, final BigDecimal amount) {
         validateAccountHolderType(accountHolder);
-        validateAccountHolderBalance(accountHolder);
+        validateAccountHolderBalance(accountHolder, amount);
     }
 
     @Override
@@ -41,9 +41,9 @@ public class AccountHolderService implements AccountHolderUseCase {
         return accountHolderMapper.from(entityAccountHolder);
     }
 
-    private void validateAccountHolderBalance(final AccountHolder accountHolder) {
+    private void validateAccountHolderBalance(final AccountHolder accountHolder, BigDecimal amount) {
         log.info("Validating AccountHolder balance [{}]", accountHolder);
-        if (accountHolder.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+        if (accountHolder.getBalance().compareTo(amount) < 0) {
             log.error("This account holder {} has not enough balance {}", accountHolder.getId(), accountHolder.getBalance());
             throw new RuntimeException(String.format("Account Holder %s has not enough balance.", accountHolder));
         }

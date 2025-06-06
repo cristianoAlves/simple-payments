@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  simple-payments:
+    image: simple-payments:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://payments-postgres:5432/paymentsdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: mysecretpassword
+    depends_on:
+      - payments-postgres
+
+  payments-postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: paymentsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - payments-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  payments-postgres-data:

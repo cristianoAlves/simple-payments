@@ -1,4 +1,4 @@
-package com.simple.payments.adapters.outbound.persistence.transaction.mapper;
+package com.simple.payments.adapters.outbound.persistence.accountholder.mapper;
 
 import com.simple.payments.adapters.outbound.persistence.accountholder.entity.EntityAccountHolder;
 import com.simple.payments.config.MapperConfiguration;

@@ -1,14 +1,7 @@
 # simple-payments
 
-#### Start the PostgreSQL Docker Container
-
-#### Running postgres standalone
-
+## Running the application using docker compose
+#### From your root directory:
 ```
-docker run --name payments-postgres \
-  -e POSTGRES_DB=paymentsdb \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=mysecretpassword \
-  -p 5432:5432 \
-  -d postgres:15
+docker compose up -d --build
 ```
