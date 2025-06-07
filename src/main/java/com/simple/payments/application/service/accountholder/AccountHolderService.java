@@ -25,9 +25,10 @@ public class AccountHolderService implements AccountHolderUseCase {
     }
 
     @Override
-    public void saveAccountHolder(final AccountHolder accountHolder) {
+    public AccountHolder saveAccountHolder(final AccountHolder accountHolder) {
         log.info("Saving AccountHolder [{}]", accountHolder);
-        repository.saveAccountHolder(accountHolderMapper.to(accountHolder));
+        EntityAccountHolder entityAccountHolder = repository.saveAccountHolder(accountHolderMapper.to(accountHolder));
+        return accountHolderMapper.from(entityAccountHolder);
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 public interface AccountHolderUseCase {
     void validateTransaction(AccountHolder accountHolder, BigDecimal amount);
 
-    void saveAccountHolder(AccountHolder accountHolder);
+    AccountHolder saveAccountHolder(AccountHolder accountHolder);
 
     AccountHolder getAccountHolder(Long id);
 

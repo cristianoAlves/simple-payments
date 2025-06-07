@@ -18,7 +18,7 @@ public class AccountHolderRepositoryImpl implements AccountHolderRepository {
     }
 
     @Override
-    public void saveAccountHolder(final EntityAccountHolder entityAccountHolder) {
-        jpaRepository.save(entityAccountHolder);
+    public EntityAccountHolder saveAccountHolder(final EntityAccountHolder entityAccountHolder) {
+        return jpaRepository.save(entityAccountHolder);
     }
 }

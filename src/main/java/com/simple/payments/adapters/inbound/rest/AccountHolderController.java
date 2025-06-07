@@ -4,6 +4,7 @@ import com.simple.payments.domain.accountholder.model.AccountHolder;
 import com.simple.payments.domain.accountholder.port.in.AccountHolderUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,8 @@ public class AccountHolderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Void addAccountHolder(@RequestBody AccountHolder accountHolder) {
-        accountHolderUseCase.saveAccountHolder(accountHolder);
-        return null;
+    public ResponseEntity<AccountHolder> addAccountHolder(@RequestBody AccountHolder accountHolder) {
+        AccountHolder accountHolderResponse = accountHolderUseCase.saveAccountHolder(accountHolder);
+        return new ResponseEntity<>(accountHolderResponse, HttpStatus.CREATED);
     }
 }
