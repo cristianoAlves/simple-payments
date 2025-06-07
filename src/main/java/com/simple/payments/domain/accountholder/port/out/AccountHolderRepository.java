@@ -4,8 +4,9 @@ import com.simple.payments.adapters.outbound.persistence.accountholder.entity.En
 import java.util.Optional;
 
 public interface AccountHolderRepository {
+
     Optional<EntityAccountHolder> getById(Long id);
 
-    void saveAccountHolder(EntityAccountHolder entityAccountHolder);
+    EntityAccountHolder saveAccountHolder(EntityAccountHolder entityAccountHolder);
 
 }
