@@ -1,6 +1,7 @@
 package com.simple.payments.domain.accountholder.port.out;
 
 import com.simple.payments.adapters.outbound.persistence.accountholder.entity.EntityAccountHolder;
+import java.util.List;
 import java.util.Optional;
 
 public interface AccountHolderRepository {
@@ -9,4 +10,5 @@ public interface AccountHolderRepository {
 
     EntityAccountHolder saveAccountHolder(EntityAccountHolder entityAccountHolder);
 
+    List<EntityAccountHolder> getAllAccountHolders();
 }

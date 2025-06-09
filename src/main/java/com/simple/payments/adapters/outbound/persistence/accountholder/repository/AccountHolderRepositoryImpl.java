@@ -2,6 +2,7 @@ package com.simple.payments.adapters.outbound.persistence.accountholder.reposito
 
 import com.simple.payments.adapters.outbound.persistence.accountholder.entity.EntityAccountHolder;
 import com.simple.payments.domain.accountholder.port.out.AccountHolderRepository;
+import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,5 +21,10 @@ public class AccountHolderRepositoryImpl implements AccountHolderRepository {
     @Override
     public EntityAccountHolder saveAccountHolder(final EntityAccountHolder entityAccountHolder) {
         return jpaRepository.save(entityAccountHolder);
+    }
+
+    @Override
+    public List<EntityAccountHolder> getAllAccountHolders() {
+        return jpaRepository.findAll();
     }
 }

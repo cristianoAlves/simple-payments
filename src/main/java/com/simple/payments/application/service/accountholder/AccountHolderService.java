@@ -6,6 +6,8 @@ import com.simple.payments.domain.accountholder.model.AccountHolder;
 import com.simple.payments.domain.accountholder.port.in.AccountHolderUseCase;
 import com.simple.payments.domain.accountholder.port.out.AccountHolderRepository;
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,16 @@ public class AccountHolderService implements AccountHolderUseCase {
         });
 
         return accountHolderMapper.from(entityAccountHolder);
+    }
+
+    @Override
+    public Collection<AccountHolder> getAllAccountHolders() {
+        log.info("Getting all Account Holders");
+
+        List<EntityAccountHolder> allAccountHolders = repository.getAllAccountHolders();
+        return allAccountHolders.stream()
+            .map(accountHolderMapper::from)
+            .toList();
     }
 
     private void validateAccountHolderBalance(final AccountHolder accountHolder, BigDecimal amount) {
