@@ -10,10 +10,7 @@ public class ControllerErrorHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorDto> handleGenericErrors(RuntimeException exception) {
-        ErrorDto errorDto = ErrorDto.builder()
-            .errorMessage(exception.getMessage())
-            .errorCode(HttpStatus.BAD_REQUEST.value())
-            .build();
+        ErrorDto errorDto = new ErrorDto(exception.getMessage(), HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.badRequest().body(errorDto);
     }
 }

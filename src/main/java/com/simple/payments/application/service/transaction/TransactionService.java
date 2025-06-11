@@ -8,6 +8,7 @@ import com.simple.payments.domain.transaction.model.Transaction;
 import com.simple.payments.domain.transaction.port.in.TransactionUseCase;
 import com.simple.payments.domain.transaction.port.out.TransactionRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,19 +30,18 @@ public class TransactionService implements TransactionUseCase {
         log.info("Adding a new transaction of [{}] from [{}] to [{}]", transaction.getAmount(), transaction.getSender(), transaction.getReceiver());
         restService.validateAuthorization();
 
-        AccountHolder accountHolderSender = accountHolderUseCase.getAccountHolder(transaction.getSender().getId());
-        AccountHolder accountHolderReceiver = accountHolderUseCase.getAccountHolder(transaction.getReceiver().getId());
+        AccountHolder accountHolderSender = accountHolderUseCase.getAccountHolder(transaction.getSender().id());
+        AccountHolder accountHolderReceiver = accountHolderUseCase.getAccountHolder(transaction.getReceiver().id());
 
         accountHolderUseCase.validateTransaction(accountHolderSender, transaction.getAmount());
 
         //update balance
-        accountHolderSender.setBalance(accountHolderSender.getBalance().subtract(transaction.getAmount()));
-        accountHolderReceiver.setBalance(accountHolderReceiver.getBalance().add(transaction.getAmount()));
+        AccountHolder accountHolderSenderWithBalanceUpdated = accountHolderSender.debit(transaction.getAmount());
+        AccountHolder accountHolderReceiverWithBalanceUpdated = accountHolderReceiver.credit(transaction.getAmount());
 
-        accountHolderUseCase.saveAccountHolder(accountHolderSender);
-        accountHolderUseCase.saveAccountHolder(accountHolderReceiver);
+        accountHolderUseCase.saveAllAccountHolders(List.of(accountHolderSenderWithBalanceUpdated, accountHolderReceiverWithBalanceUpdated));
 
-        Transaction newTransaction = transactionRepository.saveTransaction(mapper.to(createNewTransaction(transaction, accountHolderReceiver, accountHolderSender)));
+        Transaction newTransaction = transactionRepository.saveTransaction(mapper.toEntity(createNewTransaction(transaction, accountHolderReceiverWithBalanceUpdated, accountHolderSenderWithBalanceUpdated)));
 
         log.info("Done saving transaction.");
         return newTransaction;

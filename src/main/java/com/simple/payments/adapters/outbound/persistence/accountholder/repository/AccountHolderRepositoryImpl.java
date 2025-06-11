@@ -27,4 +27,9 @@ public class AccountHolderRepositoryImpl implements AccountHolderRepository {
     public List<EntityAccountHolder> getAllAccountHolders() {
         return jpaRepository.findAll();
     }
+
+    @Override
+    public void saveAllAccountHolders(List<EntityAccountHolder> entityAccountHolders) {
+        jpaRepository.saveAll(entityAccountHolders);
+    }
 }

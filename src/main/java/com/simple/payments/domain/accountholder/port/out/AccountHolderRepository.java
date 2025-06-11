@@ -11,4 +11,6 @@ public interface AccountHolderRepository {
     EntityAccountHolder saveAccountHolder(EntityAccountHolder entityAccountHolder);
 
     List<EntityAccountHolder> getAllAccountHolders();
+
+    void saveAllAccountHolders(List<EntityAccountHolder> entityAccountHolders);
 }
