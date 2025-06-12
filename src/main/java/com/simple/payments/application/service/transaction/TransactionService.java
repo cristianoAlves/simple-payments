@@ -27,20 +27,21 @@ public class TransactionService implements TransactionUseCase {
     @Override
     @Transactional
     public Transaction addTransaction(final Transaction transaction) {
-        log.info("Adding a new transaction of [{}] from [{}] to [{}]", transaction.getAmount(), transaction.getSender(), transaction.getReceiver());
+        log.info("Adding a new transaction of [{}] from [{}] to [{}]", transaction.amount(), transaction.sender(), transaction.receiver());
         restService.validateAuthorization();
 
-        AccountHolder accountHolderSender = accountHolderUseCase.getAccountHolder(transaction.getSender().id());
-        AccountHolder accountHolderReceiver = accountHolderUseCase.getAccountHolder(transaction.getReceiver().id());
+        AccountHolder accountHolderSender = accountHolderUseCase.getAccountHolder(transaction.sender().id());
+        AccountHolder accountHolderReceiver = accountHolderUseCase.getAccountHolder(transaction.receiver().id());
 
-        accountHolderUseCase.validateTransaction(accountHolderSender, transaction.getAmount());
+        accountHolderUseCase.validateTransaction(accountHolderSender, transaction.amount());
 
         //update balance
-        AccountHolder accountHolderSenderWithBalanceUpdated = accountHolderSender.debit(transaction.getAmount());
-        AccountHolder accountHolderReceiverWithBalanceUpdated = accountHolderReceiver.credit(transaction.getAmount());
+        AccountHolder accountHolderSenderWithBalanceUpdated = accountHolderSender.debit(transaction.amount());
+        AccountHolder accountHolderReceiverWithBalanceUpdated = accountHolderReceiver.credit(transaction.amount());
 
         accountHolderUseCase.saveAllAccountHolders(List.of(accountHolderSenderWithBalanceUpdated, accountHolderReceiverWithBalanceUpdated));
 
+        //need to create a new transaction since the transaction received has only the sender/receiver ID's
         Transaction newTransaction = transactionRepository.saveTransaction(mapper.toEntity(createNewTransaction(transaction, accountHolderReceiverWithBalanceUpdated, accountHolderSenderWithBalanceUpdated)));
 
         log.info("Done saving transaction.");
@@ -48,12 +49,7 @@ public class TransactionService implements TransactionUseCase {
     }
 
     private Transaction createNewTransaction(Transaction transaction, AccountHolder accountHolderReceiver, AccountHolder accountHolderSender) {
-        return Transaction.builder()
-            .sender(accountHolderSender)
-            .receiver(accountHolderReceiver)
-            .timestamp(LocalDateTime.now())
-            .amount(transaction.getAmount())
-            .build();
+        return new Transaction(null, transaction.amount(), accountHolderSender, accountHolderReceiver, LocalDateTime.now());
     }
 
 }
