@@ -8,6 +8,7 @@ import com.simple.payments.domain.transaction.model.Transaction;
 import com.simple.payments.domain.transaction.port.in.TransactionUseCase;
 import com.simple.payments.domain.transaction.port.out.TransactionRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,34 +27,29 @@ public class TransactionService implements TransactionUseCase {
     @Override
     @Transactional
     public Transaction addTransaction(final Transaction transaction) {
-        log.info("Adding a new transaction of [{}] from [{}] to [{}]", transaction.getAmount(), transaction.getSender(), transaction.getReceiver());
+        log.info("Adding a new transaction of [{}] from [{}] to [{}]", transaction.amount(), transaction.sender(), transaction.receiver());
         restService.validateAuthorization();
 
-        AccountHolder accountHolderSender = accountHolderUseCase.getAccountHolder(transaction.getSender().getId());
-        AccountHolder accountHolderReceiver = accountHolderUseCase.getAccountHolder(transaction.getReceiver().getId());
+        AccountHolder accountHolderSender = accountHolderUseCase.getAccountHolder(transaction.sender().id());
+        AccountHolder accountHolderReceiver = accountHolderUseCase.getAccountHolder(transaction.receiver().id());
 
-        accountHolderUseCase.validateTransaction(accountHolderSender, transaction.getAmount());
+        accountHolderUseCase.validateTransaction(accountHolderSender, transaction.amount());
 
         //update balance
-        accountHolderSender.setBalance(accountHolderSender.getBalance().subtract(transaction.getAmount()));
-        accountHolderReceiver.setBalance(accountHolderReceiver.getBalance().add(transaction.getAmount()));
+        AccountHolder accountHolderSenderWithBalanceUpdated = accountHolderSender.debit(transaction.amount());
+        AccountHolder accountHolderReceiverWithBalanceUpdated = accountHolderReceiver.credit(transaction.amount());
 
-        accountHolderUseCase.saveAccountHolder(accountHolderSender);
-        accountHolderUseCase.saveAccountHolder(accountHolderReceiver);
+        accountHolderUseCase.saveAllAccountHolders(List.of(accountHolderSenderWithBalanceUpdated, accountHolderReceiverWithBalanceUpdated));
 
-        Transaction newTransaction = transactionRepository.saveTransaction(mapper.to(createNewTransaction(transaction, accountHolderReceiver, accountHolderSender)));
+        //need to create a new transaction since the transaction received has only the sender/receiver ID's
+        Transaction newTransaction = transactionRepository.saveTransaction(mapper.toEntity(createNewTransaction(transaction, accountHolderReceiverWithBalanceUpdated, accountHolderSenderWithBalanceUpdated)));
 
         log.info("Done saving transaction.");
         return newTransaction;
     }
 
     private Transaction createNewTransaction(Transaction transaction, AccountHolder accountHolderReceiver, AccountHolder accountHolderSender) {
-        return Transaction.builder()
-            .sender(accountHolderSender)
-            .receiver(accountHolderReceiver)
-            .timestamp(LocalDateTime.now())
-            .amount(transaction.getAmount())
-            .build();
+        return new Transaction(null, transaction.amount(), accountHolderSender, accountHolderReceiver, LocalDateTime.now());
     }
 
 }

@@ -6,6 +6,7 @@ import com.simple.payments.domain.accountholder.model.AccountHolder;
 import com.simple.payments.domain.accountholder.port.in.AccountHolderUseCase;
 import com.simple.payments.domain.accountholder.port.out.AccountHolderRepository;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,15 @@ public class AccountHolderService implements AccountHolderUseCase {
     }
 
     @Override
+    public void saveAllAccountHolders(Collection<AccountHolder> accountHolders) {
+        log.info("Saving all AccountHolder [{}]", Arrays.toString(accountHolders.toArray()));
+        List<EntityAccountHolder> entityAccountHolders = accountHolders.stream()
+            .map(accountHolderMapper::to)
+            .toList();
+        repository.saveAllAccountHolders(entityAccountHolders);
+    }
+
+    @Override
     public AccountHolder getAccountHolder(final Long id) {
         log.info("Getting account holder using id [{}]", id);
         EntityAccountHolder entityAccountHolder = repository.getById(id).orElseThrow(() -> {
@@ -56,17 +66,17 @@ public class AccountHolderService implements AccountHolderUseCase {
 
     private void validateAccountHolderBalance(final AccountHolder accountHolder, BigDecimal amount) {
         log.info("Validating AccountHolder balance [{}]", accountHolder);
-        if (accountHolder.getBalance().compareTo(amount) < 0) {
-            log.error("This account holder {} has not enough balance {}", accountHolder.getId(), accountHolder.getBalance());
+        if (accountHolder.balance().compareTo(amount) < 0) {
+            log.error("This account holder {} has not enough balance {}", accountHolder.id(), accountHolder.balance());
             throw new RuntimeException(String.format("Account Holder %s has not enough balance.", accountHolder));
         }
     }
 
     private void validateAccountHolderType(final AccountHolder accountHolder) {
         log.info("Validating AccountHolder type [{}]", accountHolder);
-        if (!accountHolder.getType().isAbleToSendTransactions()) {
-            log.error("{} account holder type cannot send transactions", accountHolder.getType());
-            throw new RuntimeException(String.format("Account Holder type %s cannot send transactions.", accountHolder.getType()));
+        if (!accountHolder.type().isAbleToSendTransactions()) {
+            log.error("{} account holder type cannot send transactions", accountHolder.type());
+            throw new RuntimeException(String.format("Account Holder type %s cannot send transactions.", accountHolder.type()));
         }
     }
 }

@@ -21,7 +21,7 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody TransactionDTO body) {
-        Transaction newTransaction = transactionUseCase.addTransaction(mapper.from(body));
+        Transaction newTransaction = transactionUseCase.addTransaction(mapper.fromDto(body));
         return new ResponseEntity<>(newTransaction, HttpStatus.OK);
     }
 }

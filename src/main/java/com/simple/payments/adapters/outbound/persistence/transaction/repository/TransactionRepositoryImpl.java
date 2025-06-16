@@ -16,6 +16,6 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     @Override
     public Transaction saveTransaction(EntityTransaction transaction) {
-        return mapper.from(jpaRepository.save(transaction));
+        return mapper.fromEntity(jpaRepository.save(transaction));
     }
 }

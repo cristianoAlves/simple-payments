@@ -9,6 +9,8 @@ public interface AccountHolderUseCase {
 
     AccountHolder saveAccountHolder(AccountHolder accountHolder);
 
+    void saveAllAccountHolders(Collection<AccountHolder> accountHolders);
+
     AccountHolder getAccountHolder(Long id);
 
     Collection<AccountHolder> getAllAccountHolders();
