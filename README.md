@@ -1,5 +1,27 @@
 # simple-payments
-https://github.com/PicPay/picpay-desafio-backend?tab=readme-ov-file
+## Requisites
+
+### Business rules:
+
+- For both Account Holder Type, these attributes should be used: `Full Name`, `CPF`(unique), `e-mail`(unique) and `password`
+- Account Holders can transfer money to each other, however `MERCHANT` cannot send money.
+- Account Holders cannot send money if they do not have enough balance
+- All transactions should be authorized through the service: [https://util.devi.tools/api/v2/authorize](https://util.devi.tools/api/v2/authorize)
+- The transaction should be reverted in case of error 
+- This should be a RESTFull service
+
+## Transfer Endpoint
+
+```http request
+POST /transfer
+Content-Type: application/json
+
+{
+  "value": 100.0,
+  "payer": 4,
+  "payee": 15
+}
+```
 
 ## Technologies
 * [Spring Boot](https://spring.io/projects/spring-boot)
@@ -26,6 +48,7 @@ src/main/java
     └── PaymentsApplication.java
 ```
 ## Design
+![Desenho de Arquitetura](others/etc/docs/payment-design.png)
 
 ## Running the application using docker compose
 ### Clone this repository:
