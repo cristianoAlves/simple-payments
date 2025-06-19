@@ -1,6 +1,5 @@
 package com.simple.payments.application.service.transaction;
 
-import com.simple.payments.adapters.outbound.persistence.transaction.mapper.TransactionMapper;
 import com.simple.payments.application.service.rest.RestService;
 import com.simple.payments.domain.accountholder.model.AccountHolder;
 import com.simple.payments.domain.accountholder.port.in.AccountHolderUseCase;
@@ -22,7 +21,6 @@ public class TransactionService implements TransactionUseCase {
     private final AccountHolderUseCase accountHolderUseCase;
     private final TransactionRepository transactionRepository;
     private final RestService restService;
-    private final TransactionMapper mapper;
 
     @Override
     @Transactional
@@ -42,7 +40,7 @@ public class TransactionService implements TransactionUseCase {
         accountHolderUseCase.saveAllAccountHolders(List.of(accountHolderSenderWithBalanceUpdated, accountHolderReceiverWithBalanceUpdated));
 
         //need to create a new transaction since the transaction received has only the sender/receiver ID's
-        Transaction newTransaction = transactionRepository.saveTransaction(mapper.toEntity(createNewTransaction(transaction, accountHolderReceiverWithBalanceUpdated, accountHolderSenderWithBalanceUpdated)));
+        Transaction newTransaction = transactionRepository.saveTransaction(createNewTransaction(transaction, accountHolderReceiverWithBalanceUpdated, accountHolderSenderWithBalanceUpdated));
 
         log.info("Done saving transaction.");
         return newTransaction;

@@ -33,7 +33,7 @@ class AccountHolderServiceTest extends BaseServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new AccountHolderService(repository, getMapper());
+        service = new AccountHolderService(repository);
     }
 
     @Test
@@ -64,9 +64,8 @@ class AccountHolderServiceTest extends BaseServiceTest {
     @Test
     void saveAccountHolderOk() {
         AccountHolder expectedAccountHolder = AccountHolderFixture.createAccountHolder(10L, AccountHolderType.REGULAR);
-        EntityAccountHolder entityAccountHolder = createEntityFromModel(expectedAccountHolder);
 
-        Mockito.when(repository.saveAccountHolder(any(EntityAccountHolder.class))).thenReturn(entityAccountHolder);
+        Mockito.when(repository.saveAccountHolder(any(AccountHolder.class))).thenReturn(expectedAccountHolder);
         AccountHolder saveAccountHolder = service.saveAccountHolder(expectedAccountHolder);
 
         validateAccountHolder(saveAccountHolder, expectedAccountHolder);
@@ -85,15 +84,14 @@ class AccountHolderServiceTest extends BaseServiceTest {
     @Test
     void getAccountHolder() {
         AccountHolder expectedAccountHolder = AccountHolderFixture.createAccountHolder(10L, AccountHolderType.REGULAR);
-        EntityAccountHolder entityAccountHolder = createEntityFromModel(expectedAccountHolder);
 
-        Mockito.when(repository.getById(10L)).thenReturn(Optional.of(entityAccountHolder));
+        Mockito.when(repository.getById(10L)).thenReturn(Optional.of(expectedAccountHolder));
         AccountHolder savedAccountHolder = service.getAccountHolder(10L);
         validateAccountHolder(savedAccountHolder, expectedAccountHolder);
     }
 
     @Test
-    void getNotFoundAccountHolder() {
+    void gettingNotFoundAccountHolder() {
         Mockito.when(repository.getById(10L)).thenReturn(Optional.empty());
         try {
             service.getAccountHolder(10L);
@@ -106,7 +104,7 @@ class AccountHolderServiceTest extends BaseServiceTest {
     @Test
     void getAllAccountHolders() {
         List<AccountHolder> expectedAccountHolders = createListOfAccountHolders();
-        Mockito.when(repository.getAllAccountHolders()).thenReturn(createListOfEntityAccountHolder(expectedAccountHolders));
+        Mockito.when(repository.getAllAccountHolders()).thenReturn(expectedAccountHolders);
         validateAccountHolders(service.getAllAccountHolders(), expectedAccountHolders);
     }
 
@@ -129,11 +127,5 @@ class AccountHolderServiceTest extends BaseServiceTest {
         AccountHolder expectedAccountHolder1 = AccountHolderFixture.createAccountHolder(10L, AccountHolderType.REGULAR);
         AccountHolder expectedAccountHolder2 = AccountHolderFixture.createAccountHolder(20L, AccountHolderType.MERCHANT);
         return List.of(expectedAccountHolder1, expectedAccountHolder2);
-    }
-
-    private List<EntityAccountHolder> createListOfEntityAccountHolder(Collection<AccountHolder> accountHolders) {
-        return accountHolders.stream()
-            .map(this::createEntityFromModel)
-            .toList();
     }
 }

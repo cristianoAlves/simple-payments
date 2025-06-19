@@ -12,8 +12,8 @@ public abstract class AccountHolderMapper {
 
     @Mapping(target = "debit", ignore = true)
     @Mapping(target = "credit", ignore = true)
-    public abstract AccountHolder from(EntityAccountHolder entity);
+    public abstract AccountHolder fromEntity(EntityAccountHolder entity);
 
     @InheritInverseConfiguration
-    public abstract EntityAccountHolder to(AccountHolder accountHolder);
+    public abstract EntityAccountHolder toEntity(AccountHolder accountHolder);
 }

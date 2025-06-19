@@ -14,7 +14,7 @@ public abstract class BaseServiceTest {
     private final AccountHolderMapper mapper = Mappers.getMapper(AccountHolderMapper.class);
 
     protected EntityAccountHolder createEntityFromModel(AccountHolder expectedAccountHolder) {
-        return mapper.to(expectedAccountHolder);
+        return mapper.toEntity(expectedAccountHolder);
     }
 
 }

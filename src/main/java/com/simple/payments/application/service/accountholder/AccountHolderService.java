@@ -1,14 +1,11 @@
 package com.simple.payments.application.service.accountholder;
 
-import com.simple.payments.adapters.outbound.persistence.accountholder.entity.EntityAccountHolder;
-import com.simple.payments.adapters.outbound.persistence.accountholder.mapper.AccountHolderMapper;
 import com.simple.payments.domain.accountholder.model.AccountHolder;
 import com.simple.payments.domain.accountholder.port.in.AccountHolderUseCase;
 import com.simple.payments.domain.accountholder.port.out.AccountHolderRepository;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 public class AccountHolderService implements AccountHolderUseCase {
 
     private final AccountHolderRepository repository;
-    private final AccountHolderMapper accountHolderMapper;
 
     @Override
     public void validateTransaction(final AccountHolder accountHolder, final BigDecimal amount) {
@@ -30,38 +26,30 @@ public class AccountHolderService implements AccountHolderUseCase {
     @Override
     public AccountHolder saveAccountHolder(final AccountHolder accountHolder) {
         log.info("Saving AccountHolder [{}]", accountHolder);
-        EntityAccountHolder entityAccountHolder = repository.saveAccountHolder(accountHolderMapper.to(accountHolder));
-        return accountHolderMapper.from(entityAccountHolder);
+        return repository.saveAccountHolder(accountHolder);
     }
 
     @Override
     public void saveAllAccountHolders(Collection<AccountHolder> accountHolders) {
         log.info("Saving all AccountHolder [{}]", Arrays.toString(accountHolders.toArray()));
-        List<EntityAccountHolder> entityAccountHolders = accountHolders.stream()
-            .map(accountHolderMapper::to)
-            .toList();
-        repository.saveAllAccountHolders(entityAccountHolders);
+        repository.saveAllAccountHolders(accountHolders);
     }
 
     @Override
     public AccountHolder getAccountHolder(final Long id) {
         log.info("Getting account holder using id [{}]", id);
-        EntityAccountHolder entityAccountHolder = repository.getById(id).orElseThrow(() -> {
+
+        return repository.getById(id).orElseThrow(() -> {
             log.error("AccountHolder with id [{}] was not found.", id);
             return new RuntimeException(String.format("AccountHolder with id %s was not found.", id));
         });
 
-        return accountHolderMapper.from(entityAccountHolder);
     }
 
     @Override
     public Collection<AccountHolder> getAllAccountHolders() {
         log.info("Getting all Account Holders");
-
-        List<EntityAccountHolder> allAccountHolders = repository.getAllAccountHolders();
-        return allAccountHolders.stream()
-            .map(accountHolderMapper::from)
-            .toList();
+        return repository.getAllAccountHolders();
     }
 
     private void validateAccountHolderBalance(final AccountHolder accountHolder, BigDecimal amount) {

@@ -39,15 +39,13 @@ class TransactionServiceTest extends BaseServiceTest {
     @Mock
     private RestService restService;
 
-    private final TransactionMapper transactionMapper = Mappers.getMapper(TransactionMapper.class);
-    private final AccountHolderMapper accountHolderMapper = Mappers.getMapper(AccountHolderMapper.class);
     private TransactionService transactionService;
 
     @BeforeEach
     void setUp() {
-        AccountHolderUseCase accountHolderUseCase = new AccountHolderService(accountHolderRepository, accountHolderMapper);
+        AccountHolderUseCase accountHolderUseCase = new AccountHolderService(accountHolderRepository);
         transactionService = new TransactionService(accountHolderUseCase,
-            transactionRepository, restService, transactionMapper);
+            transactionRepository, restService);
     }
 
     @Test
@@ -62,10 +60,10 @@ class TransactionServiceTest extends BaseServiceTest {
         Transaction expectedTransaction = createTransaction(10L, expectedSender, expectedReceiver);
 
         Mockito.doNothing().when(restService).validateAuthorization();
-        when(accountHolderRepository.getById(10L)).thenReturn(Optional.ofNullable(createEntityFromModel(sender)));
-        when(accountHolderRepository.getById(20L)).thenReturn(Optional.ofNullable(createEntityFromModel(receiver)));
+        when(accountHolderRepository.getById(10L)).thenReturn(Optional.of(sender));
+        when(accountHolderRepository.getById(20L)).thenReturn(Optional.of(receiver));
         Mockito.doNothing().when(accountHolderRepository).saveAllAccountHolders(Mockito.anyList());
-        when(transactionRepository.saveTransaction(any(EntityTransaction.class))).thenReturn(expectedTransaction);
+        when(transactionRepository.saveTransaction(any(Transaction.class))).thenReturn(expectedTransaction);
 
         Transaction actualTransaction = transactionService.addTransaction(expectedTransaction);
         validateTransaction(actualTransaction, expectedTransaction);
@@ -79,8 +77,8 @@ class TransactionServiceTest extends BaseServiceTest {
         Transaction expectedTransaction = createTransaction(10L, sender, receiver);
 
         Mockito.doNothing().when(restService).validateAuthorization();
-        when(accountHolderRepository.getById(10L)).thenReturn(Optional.ofNullable(createEntityFromModel(sender)));
-        when(accountHolderRepository.getById(20L)).thenReturn(Optional.ofNullable(createEntityFromModel(receiver)));
+        when(accountHolderRepository.getById(10L)).thenReturn(Optional.of(sender));
+        when(accountHolderRepository.getById(20L)).thenReturn(Optional.of(receiver));
 
         try {
             transactionService.addTransaction(expectedTransaction);
