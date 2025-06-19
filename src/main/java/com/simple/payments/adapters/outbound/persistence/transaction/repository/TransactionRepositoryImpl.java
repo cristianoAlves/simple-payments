@@ -1,6 +1,5 @@
 package com.simple.payments.adapters.outbound.persistence.transaction.repository;
 
-import com.simple.payments.adapters.outbound.persistence.transaction.entity.EntityTransaction;
 import com.simple.payments.adapters.outbound.persistence.transaction.mapper.TransactionMapper;
 import com.simple.payments.domain.transaction.model.Transaction;
 import com.simple.payments.domain.transaction.port.out.TransactionRepository;
@@ -11,11 +10,11 @@ import org.springframework.stereotype.Repository;
 @AllArgsConstructor
 public class TransactionRepositoryImpl implements TransactionRepository {
 
-    private final TransactionSpringJpaRepository jpaRepository;
+    private final TransactionSpringJpaRepository repository;
     private final TransactionMapper mapper;
 
     @Override
-    public Transaction saveTransaction(EntityTransaction transaction) {
-        return mapper.fromEntity(jpaRepository.save(transaction));
+    public Transaction saveTransaction(Transaction transaction) {
+        return mapper.fromEntity(repository.save(mapper.toEntity(transaction)));
     }
 }

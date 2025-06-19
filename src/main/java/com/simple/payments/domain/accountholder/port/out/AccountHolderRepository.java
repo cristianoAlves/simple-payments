@@ -1,16 +1,17 @@
 package com.simple.payments.domain.accountholder.port.out;
 
-import com.simple.payments.adapters.outbound.persistence.accountholder.entity.EntityAccountHolder;
+import com.simple.payments.domain.accountholder.model.AccountHolder;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface AccountHolderRepository {
 
-    Optional<EntityAccountHolder> getById(Long id);
+    Optional<AccountHolder> getById(Long id);
 
-    EntityAccountHolder saveAccountHolder(EntityAccountHolder entityAccountHolder);
+    AccountHolder saveAccountHolder(AccountHolder accountHolder);
 
-    List<EntityAccountHolder> getAllAccountHolders();
+    List<AccountHolder> getAllAccountHolders();
 
-    void saveAllAccountHolders(List<EntityAccountHolder> entityAccountHolders);
+    void saveAllAccountHolders(Collection<AccountHolder> accountHolders);
 }

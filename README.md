@@ -33,6 +33,7 @@ Content-Type: application/json
 * [Spring Actuator](https://docs.spring.io/spring-boot/docs/2.0.x/actuator-api/html/) as part of Observability
 * [Liquibase](https://www.liquibase.com/) as database versioning
 * [PostgreSQL](https://www.postgresql.org/) as a database
+* [Testcontainers](https://testcontainers.com/)
 
 ## Architecture
 Based on [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
@@ -42,13 +43,15 @@ src/main/java
     |── adapters/ 
     │   ├── inbound
     │   └── outbound
-    ├── application 
+    ├── application
+    │   ├── service
+    │   └── PaymentsApplication.java
     ├── config/
-    ├── domain/
-    └── PaymentsApplication.java
+    └── domain/
+
 ```
 ## Design
-![Desenho de Arquitetura](others/etc/docs/payment-design.png)
+![payment-design.png](others/etc/docs/payment-design.png)
 
 ## Running the application using docker compose
 ### Clone this repository:
